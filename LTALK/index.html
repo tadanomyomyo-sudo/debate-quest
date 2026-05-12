@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEBATE QUEST — English Battle Arena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4ff;
+  --card: #ffffff;
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --secondary: #f59e0b;
+  --accent: #10b981;
+  --danger: #ef4444;
+  --pink: #ec4899;
+  --text: #1e1b4b;
+  --text-mid: #4b5563;
+  --text-light: #9ca3af;
+  --border: #e0e7ff;
+  --shadow-card: 0 8px 32px rgba(79,70,229,0.12);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(129,140,248,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(245,158,11,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(16,185,129,0.08) 0%, transparent 60%);
+}
+body::before {
+  content: '✦ ✧ ✦ ✧ ✦';
+  position: fixed;
+  top: 20px; right: 20px;
+  font-size: 12px;
+  color: var(--primary-light);
+  letter-spacing: 8px;
+  opacity: 0.4;
+  animation: twinkle 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes twinkle { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+.container { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+
+/* HEADER */
+.header { text-align: center; padding: 32px 0 24px; }
+.header-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary), var(--pink));
+  color: white; font-size: 11px; font-weight: 800;
+  letter-spacing: 3px; padding: 6px 16px; border-radius: 100px;
+  margin-bottom: 16px; text-transform: uppercase;
+}
+.header h1 {
+  font-family: 'Fredoka One', sans-serif;
+  font-size: clamp(44px, 9vw, 80px); line-height: 1;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--pink) 50%, var(--secondary) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 8px; filter: drop-shadow(0 2px 0 rgba(79,70,229,0.2));
+}
+.header p { color: var(--text-mid); font-size: 15px; font-weight: 600; }
+
+/* SCREENS */
+.screen { display: none; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+.screen.active { display: block; }
+@keyframes popIn { from{opacity:0;transform:scale(0.94) translateY(12px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+.section-title {
+  font-family: 'Fredoka One', sans-serif;
+  font-size: 22px; color: var(--primary); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* CHARACTER CARDS */
+.chars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.char-card {
+  background: var(--card); border: 3px solid var(--border); border-radius: var(--radius);
+  padding: 20px 18px; cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-card); position: relative; overflow: hidden;
+}
+.char-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--primary-light); box-shadow: 0 12px 40px rgba(79,70,229,0.18); }
+.char-card.selected { border-color: var(--primary); background: linear-gradient(135deg, #f0f0ff, #fff); box-shadow: 0 0 0 3px rgba(79,70,229,0.2), var(--shadow-card); transform: translateY(-2px); }
+.char-card.selected::before {
+  content: '✓'; position: absolute; top: 12px; right: 14px;
+  width: 26px; height: 26px; background: var(--primary); color: white;
+  border-radius: 50%; font-size: 13px; font-weight: 800; display: grid; place-items: center;
+}
+.char-emoji { font-size: 44px; display: block; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+.char-name { font-family: 'Fredoka One', sans-serif; font-size: 20px; color: var(--text); margin-bottom: 2px; }
+.char-era { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--primary-light); margin-bottom: 8px; }
+.char-desc { font-size: 12px; color: var(--text-mid); line-height: 1.6; font-weight: 600; }
+.char-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.tag { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; background: var(--bg); color: var(--primary); border: 2px solid var(--border); }
+.level-badge { display: inline-block; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 100px; margin-bottom: 8px; letter-spacing: 1px; }
+.level-a2 { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+.level-b1 { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+.level-b2 { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+.level-c1 { background: #fce7f3; color: #9d174d; border: 2px solid #f9a8d4; }
+.level-c2 { background: #ede9fe; color: #4c1d95; border: 2px solid #c4b5fd; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; padding: 14px 28px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.15s; }
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--pink)); color: white; box-shadow: 0 4px 0 rgba(79,70,229,0.4); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(79,70,229,0.4); }
+.btn-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(79,70,229,0.4); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-secondary { background: white; color: var(--primary); border: 3px solid var(--border); box-shadow: 0 4px 0 var(--border); }
+.btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--border); border-color: var(--primary-light); }
+.btn-secondary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--border); }
+.btn-green { background: linear-gradient(135deg, var(--accent), #059669); color: white; box-shadow: 0 4px 0 rgba(16,185,129,0.4); }
+.btn-green:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(16,185,129,0.4); }
+.btn-green:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* BATTLE BAR */
+.battle-bar {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
+  background: white; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 16px;
+  box-shadow: var(--shadow-card); border: 3px solid var(--border);
+}
+.fighter { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.fighter-emoji { font-size: 36px; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.1)); }
+.fighter-name { font-family: 'Fredoka One', sans-serif; font-size: 16px; color: var(--text); }
+.fighter-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase; }
+.vs-badge {
+  font-family: 'Fredoka One', sans-serif; font-size: 26px;
+  background: linear-gradient(135deg, var(--secondary), var(--pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+/* TOPIC */
+.topic-card {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: var(--radius);
+  padding: 18px 22px; margin-bottom: 16px; position: relative; overflow: hidden;
+}
+.topic-card::before { content: '💬'; position: absolute; right: 16px; top: 12px; font-size: 36px; opacity: 0.2; }
+.topic-label { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 6px; }
+.topic-text { font-family: 'Fredoka One', sans-serif; font-size: 18px; color: white; line-height: 1.4; }
+
+/* ROUNDS */
+.round-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; }
+.round-pip { width: 32px; height: 10px; border-radius: 100px; background: var(--border); transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.round-pip.done { background: var(--accent); }
+.round-pip.active { background: var(--secondary); width: 48px; box-shadow: 0 0 10px rgba(245,158,11,0.5); }
+.round-label { font-size: 12px; font-weight: 700; color: var(--text-mid); letter-spacing: 1px; }
+
+/* CHAT */
+.chat-box {
+  background: white; border: 3px solid var(--border); border-radius: var(--radius);
+  height: 340px; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; scroll-behavior: smooth;
+}
+.chat-box::-webkit-scrollbar { width: 6px; }
+.chat-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+.msg { display: flex; flex-direction: column; max-width: 80%; }
+.msg.you { align-self: flex-end; align-items: flex-end; }
+.msg.opp { align-self: flex-start; align-items: flex-start; }
+.msg.sys { align-self: center; text-align: center; max-width: 100%; }
+.msg-who { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px; }
+.msg-bubble { padding: 11px 15px; border-radius: 16px; font-size: 13px; line-height: 1.65; font-weight: 600; animation: bubbleIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes bubbleIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+.msg.you .msg-bubble { background: linear-gradient(135deg, var(--primary), #7c3aed); color: white; border-bottom-right-radius: 4px; }
+.msg.opp .msg-bubble { background: var(--bg); color: var(--text); border: 2px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.sys .msg-bubble { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 2px solid #fcd34d; border-radius: 100px; font-size: 11px; padding: 6px 14px; }
+
+/* INPUT */
+.input-row { display: flex; gap: 10px; }
+textarea.debate-input {
+  flex: 1; background: white; border: 3px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: var(--text);
+  padding: 14px 16px; resize: none; height: 80px; outline: none; transition: border-color 0.2s;
+}
+textarea.debate-input:focus { border-color: var(--primary); }
+textarea.debate-input::placeholder { color: var(--text-light); }
+.input-btns { display: flex; flex-direction: column; gap: 8px; }
+.hint-pill { font-size: 11px; font-weight: 700; color: var(--text-light); background: white; border: 2px solid var(--border); border-radius: 100px; padding: 6px 16px; display: inline-block; }
+
+/* THINKING */
+.thinking-wrap { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--bg); border-radius: 100px; border: 2px solid var(--border); font-size: 11px; font-weight: 700; color: var(--text-mid); align-self: flex-start; }
+.dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); animation: dot 1.2s infinite; margin: 0 1px; }
+.dots span:nth-child(2){animation-delay:.2s} .dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{opacity:.2;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+
+/* JUDGMENT */
+.result-hero { text-align: center; padding: 32px 0 24px; }
+.result-emoji { font-size: 72px; display: block; margin-bottom: 12px; animation: bounce 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes bounce { from{transform:scale(0)} to{transform:scale(1)} }
+.result-title { font-family: 'Fredoka One', sans-serif; font-size: 52px; line-height: 1; margin-bottom: 8px; }
+.result-title.win { background: linear-gradient(135deg, #10b981, #059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.result-title.lose { background: linear-gradient(135deg, #ef4444, #dc2626); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.result-title.draw { background: linear-gradient(135deg, var(--secondary), #d97706); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.result-sub { font-size: 14px; font-weight: 700; color: var(--text-mid); }
+
+/* SCORES */
+.scores-wrap { background: white; border: 3px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin: 20px 0; box-shadow: var(--shadow-card); }
+.scores-title { font-family: 'Fredoka One', sans-serif; font-size: 17px; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+.score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.score-row:last-child { margin-bottom: 0; }
+.score-name { font-size: 12px; font-weight: 800; color: var(--text-mid); width: 100px; flex-shrink: 0; }
+.score-track { flex: 1; height: 12px; background: var(--bg); border-radius: 100px; overflow: hidden; border: 2px solid var(--border); }
+.score-fill { height: 100%; border-radius: 100px; width: 0; transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1); }
+.score-fill.logic { background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
+.score-fill.english { background: linear-gradient(90deg, var(--accent), #34d399); }
+.score-fill.persuasion { background: linear-gradient(90deg, var(--pink), #f43f5e); }
+.score-num { font-family: 'Fredoka One', sans-serif; font-size: 17px; color: var(--text); width: 40px; text-align: right; }
+
+/* FEEDBACK */
+.feedback-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.feedback-card { background: white; border: 3px solid var(--border); border-radius: var(--radius); padding: 18px 16px; box-shadow: var(--shadow-card); }
+.feedback-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+.feedback-title-sm { font-family: 'Fredoka One', sans-serif; font-size: 15px; color: var(--text); margin-bottom: 8px; }
+.feedback-body { font-size: 12px; font-weight: 600; color: var(--text-mid); line-height: 1.65; }
+.coaching-card { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 3px solid #fcd34d; border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.coaching-title { font-family: 'Fredoka One', sans-serif; font-size: 17px; color: #92400e; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.coaching-body { font-size: 12px; font-weight: 600; color: #78350f; line-height: 1.7; }
+.action-row { display: flex; gap: 12px; justify-content: center; }
+
+.center { text-align: center; }
+.mt-16 { margin-top: 16px; }
+
+/* NAV TABS */
+.nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.nav-tab { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; padding: 8px 18px; border-radius: 100px; border: 3px solid var(--border); background: white; color: var(--text-mid); cursor: pointer; transition: all 0.2s; }
+.nav-tab:hover { border-color: var(--primary); color: var(--primary); }
+.nav-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* HISTORY */
+.history-card { background: white; border: 3px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.history-result { font-family: 'Fredoka One', sans-serif; font-size: 28px; }
+.history-info { }
+.history-topic { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.history-meta { font-size: 11px; color: var(--text-light); }
+.history-scores { text-align: right; font-size: 11px; font-weight: 700; color: var(--text-mid); line-height: 1.8; }
+
+/* VOCAB */
+.vocab-card { background: white; border: 3px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; position: relative; }
+.vocab-original { font-size: 12px; color: #ef4444; font-weight: 700; margin-bottom: 4px; }
+.vocab-better { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.vocab-reason { font-size: 11px; color: var(--text-mid); }
+.vocab-delete { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-light); }
+.vocab-delete:hover { color: var(--danger); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 14px; font-weight: 700; }
+
+@media(max-width:560px){
+  .battle-bar { grid-template-columns: 1fr; gap: 6px; text-align:center; }
+  .feedback-grid { grid-template-columns: 1fr; }
+  .history-card { grid-template-columns: auto 1fr; }
+  .history-scores { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-badge">🎮 English Learning Game</div>
+    <h1>DEBATE QUEST</h1>
+    <p>Challenge legendary minds · Learn English · Win glory!</p>
+  </div>
+
+  <div class="nav-tabs" id="main-nav">
+    <button class="nav-tab active" onclick="navTo('select')">⚔️ Play</button>
+    <button class="nav-tab" onclick="navTo('history')">📜 Battle History</button>
+    <button class="nav-tab" onclick="navTo('vocab')">📖 My Vocabulary</button>
+  </div>
+
+  <!-- SCREEN 0: API KEY -->
+  <div id="screen-apikey" class="screen active">
+    <div style="max-width:480px;margin:40px auto;">
+      <div class="section-title">🔑 Enter Your API Key</div>
+      <div class="feedback-card" style="margin-bottom:16px;">
+        <span class="feedback-icon">ℹ️</span>
+        <div class="feedback-title-sm">Anthropic API Key が必要です</div>
+        <div class="feedback-body">
+          キーは <strong>console.anthropic.com/settings/keys</strong> で取得できます。<br>
+          入力したキーはブラウザ内にのみ保存され、外部に送信されません。
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <input id="apikey-input" type="password"
+          placeholder="sk-ant-api03-..."
+          style="flex:1;background:white;border:3px solid var(--border);border-radius:var(--radius-sm);font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:var(--text);padding:14px 16px;outline:none;"
+          onkeydown="if(event.key==='Enter')saveKey()"/>
+        <button class="btn btn-primary" onclick="saveKey()">Start 🚀</button>
+      </div>
+      <div id="apikey-error" style="color:#ef4444;font-size:12px;font-weight:700;display:none;">
+        ⚠️ sk-ant- から始まるキーを入力してください
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: SELECT -->
+  <div id="screen-select" class="screen active">
+    <div class="section-title">⚔️ Choose Your Opponent!</div>
+    <div class="chars-grid" id="chars-grid"></div>
+    <div class="center">
+      <button class="btn btn-primary" id="start-btn" disabled onclick="startDebate()">⚡ Enter the Arena!</button>
+      <div class="mt-16"><span class="hint-pill">👆 Pick a character to start</span></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1.5: STANCE SELECT -->
+  <div id="screen-stance" class="screen">
+    <div class="battle-bar">
+      <div class="fighter">
+        <div class="fighter-emoji">🎤</div>
+        <div class="fighter-name">You</div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="fighter">
+        <div class="fighter-emoji" id="stance-opp-emoji"></div>
+        <div class="fighter-name" id="stance-opp-name"></div>
+      </div>
+    </div>
+    <div class="topic-card">
+      <div class="topic-label">🎯 Today's Topic</div>
+      <div class="topic-text" id="stance-topic-text">Loading…</div>
+    </div>
+    <div class="scores-wrap">
+      <div class="scores-title">🗣️ Choose Your Position</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;">
+        <button class="btn btn-primary" onclick="chooseStance('for')" style="padding:20px;font-size:16px;border-radius:16px;">
+          👍 FOR<br><span style="font-size:11px;font-weight:600;opacity:0.8;">I agree with this topic</span>
+        </button>
+        <button class="btn btn-secondary" onclick="chooseStance('against')" style="padding:20px;font-size:16px;border-radius:16px;color:var(--danger);border-color:var(--danger);">
+          👎 AGAINST<br><span style="font-size:11px;font-weight:600;opacity:0.8;">I disagree with this topic</span>
+        </button>
+      </div>
+      <div style="text-align:center;margin-top:16px;">
+        <button class="btn btn-secondary" onclick="rerollTopic()" style="font-size:12px;padding:8px 20px;">🎲 Different Topic</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: DEBATE -->
+  <div id="screen-debate" class="screen">
+    <div class="battle-bar">
+      <div class="fighter">
+        <div class="fighter-emoji">🎤</div>
+        <div class="fighter-name">You</div>
+        <div class="fighter-label">Challenger</div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="fighter">
+        <div class="fighter-emoji" id="opp-emoji"></div>
+        <div class="fighter-name" id="opp-name-hd"></div>
+        <div class="fighter-label">Opponent</div>
+      </div>
+    </div>
+
+    <div class="topic-card">
+      <div class="topic-label">🎯 Today's Topic</div>
+      <div class="topic-text" id="topic-text">Loading…</div>
+      <div style="margin-top:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.8);">Your position: <span id="stance-display" style="background:rgba(255,255,255,0.2);padding:2px 10px;border-radius:100px;"></span></div>
+    </div>
+
+    <div class="round-row" id="round-pips"></div>
+    <div class="round-label center" id="round-label">Round 1 of 3</div>
+
+    <div class="chat-box" id="chat-box"></div>
+
+    <div class="input-row">
+      <textarea class="debate-input" id="user-input"
+        placeholder="Type your argument in English… (Ctrl+Enter to send)"
+        maxlength="1000"></textarea>
+      <div class="input-btns">
+        <button class="btn btn-green" id="send-btn" onclick="sendArg()">Send 🚀</button>
+        <button class="btn btn-secondary" onclick="forceJudge()">Judge ⚖️</button>
+      </div>
+    </div>
+    <div class="center mt-16">
+      <span class="hint-pill" id="round-hint">Round 1: Make your opening argument!</span>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: JUDGMENT -->
+  <div id="screen-judgment" class="screen">
+    <div class="result-hero">
+      <span class="result-emoji" id="result-emoji">🏆</span>
+      <div class="result-title" id="result-title">—</div>
+      <div class="result-sub" id="result-sub"></div>
+    </div>
+
+    <div class="scores-wrap">
+      <div class="scores-title">📊 Your Scores</div>
+      <div class="score-row">
+        <div class="score-name">🧠 Logic</div>
+        <div class="score-track"><div class="score-fill logic" id="bar-logic"></div></div>
+        <div class="score-num" id="num-logic">—</div>
+      </div>
+      <div class="score-row">
+        <div class="score-name">🇬🇧 English</div>
+        <div class="score-track"><div class="score-fill english" id="bar-english"></div></div>
+        <div class="score-num" id="num-english">—</div>
+      </div>
+      <div class="score-row">
+        <div class="score-name">💡 Persuasion</div>
+        <div class="score-track"><div class="score-fill persuasion" id="bar-persuasion"></div></div>
+        <div class="score-num" id="num-persuasion">—</div>
+      </div>
+    </div>
+
+    <div class="feedback-grid">
+      <div class="feedback-card">
+        <span class="feedback-icon">💪</span>
+        <div class="feedback-title-sm">Your Strengths</div>
+        <div class="feedback-body" id="fb-strengths">Loading…</div>
+      </div>
+      <div class="feedback-card">
+        <span class="feedback-icon">🎯</span>
+        <div class="feedback-title-sm">Areas to Improve</div>
+        <div class="feedback-body" id="fb-improve">Loading…</div>
+      </div>
+    </div>
+
+    <div class="coaching-card">
+      <div class="coaching-title">⭐ English Coach's Tips</div>
+      <div class="coaching-body" id="fb-coach">Loading…</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="resetGame()">🎮 New Debate</button>
+      <button class="btn btn-secondary" onclick="rematch()">🔄 Rematch</button>
+      <button class="btn btn-secondary" onclick="navTo('vocab')" style="font-size:12px;">📖 Vocabulary</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: HISTORY -->
+  <div id="screen-history" class="screen">
+    <div class="section-title">📜 Battle History</div>
+    <div id="history-list"></div>
+  </div>
+
+  <!-- SCREEN: VOCAB -->
+  <div id="screen-vocab" class="screen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="section-title" style="margin-bottom:0;">📖 My Vocabulary</div>
+      <button class="btn btn-secondary" style="font-size:11px;padding:6px 14px;" onclick="clearVocab()">🗑 Clear All</button>
+    </div>
+    <div id="vocab-list"></div>
+  </div>
+
+</div>
+<script>
+const CHARS = [
+  { id:'dreamer', name:'The Dreamer', era:'Modern Progressive', emoji:'🌱', level:'A2', levelClass:'level-a2',
+    desc:'Friendly and easy to understand. Perfect for beginners!', tags:['Justice','Climate','Simple English'],
+    prompt:`You are "The Dreamer," a friendly progressive activist. IMPORTANT: You are talking with an English learner at A2 level. Use ONLY simple, everyday words. Write SHORT sentences (max 15 words each). Avoid difficult vocabulary. Use common words like "good," "bad," "people," "important," "think," "because." Keep replies 60-80 words. Be encouraging and clear.`,
+    judgeLevel:`The human debater is an A2 English learner (beginner). Judge their English gently. Focus on communication success, not grammar perfection. Praise attempts and simple correct usage.`},
+  { id:'socrates', name:'Socrates', era:'Ancient Greece · 470 BC', emoji:'🏛️', level:'B1', levelClass:'level-b1',
+    desc:'Asks clever questions. Good for intermediate learners.', tags:['Dialectic','Irony','Philosophy'],
+    prompt:`You are Socrates. IMPORTANT: You are talking with a B1 English learner (intermediate). Use clear, everyday vocabulary. Avoid very complex sentences. Ask simple but thought-provoking questions. Use basic philosophical ideas explained clearly. Keep replies 80-100 words. Always end with one clear question.`,
+    judgeLevel:`The human debater is a B1 English learner (intermediate). Judge their English at intermediate level. Note grammar mistakes kindly. Praise good vocabulary use and logical structure.`},
+  { id:'einstein', name:'Einstein', era:'Germany/USA · 1879-1955', emoji:'🔭', level:'B2', levelClass:'level-b2',
+    desc:'Thought experiments and science. For upper-intermediate learners.', tags:['Science','Logic','Ethics'],
+    prompt:`You are Albert Einstein. IMPORTANT: You are talking with a B2 English learner (upper-intermediate). Use varied vocabulary and some complex sentences. Include thought experiments and scientific reasoning. Connect ideas across sentences. Keep replies 90-110 words. Be intellectually stimulating but accessible.`,
+    judgeLevel:`The human debater is a B2 English learner (upper-intermediate). Judge their English at upper-intermediate level. Note good use of complex structures. Point out areas to improve naturally.`},
+  { id:'hawk', name:'The Hawk', era:'Modern Neoconservative', emoji:'🦅', level:'C1', levelClass:'level-c1',
+    desc:'Sharp political debate. For advanced learners.', tags:['Realpolitik','Security','Power'],
+    prompt:`You are "The Hawk," a sharp neoconservative debater. IMPORTANT: You are talking with a C1 English learner (advanced). Use sophisticated political and strategic vocabulary. Employ complex argument structures, rhetorical questions, and counter-arguments. Be forceful and precise. Keep replies 100-120 words.`,
+    judgeLevel:`The human debater is a C1 English learner (advanced). Judge their English at advanced level. Expect sophisticated vocabulary, complex grammar, and nuanced arguments. Give detailed feedback on style and precision.`},
+  { id:'chomsky', name:'Noam Chomsky', era:'USA · 1928-present', emoji:'📚', level:'C1', levelClass:'level-c1',
+    desc:'Academic arguments with evidence. For advanced learners.', tags:['Evidence','Politics','Linguistics'],
+    prompt:`You are Noam Chomsky. IMPORTANT: You are talking with a C1 English learner (advanced). Use academic vocabulary, complex sentence structures, and evidence-based arguments. Reference historical facts and institutional critique. Stay calm but intellectually devastating. Keep replies 100-120 words.`,
+    judgeLevel:`The human debater is a C1 English learner (advanced). Judge their English at advanced level. Assess academic vocabulary, argument coherence, and use of evidence.`},
+  { id:'nietzsche', name:'Nietzsche', era:'Germany · 1844-1900', emoji:'⚡', level:'C2', levelClass:'level-c2',
+    desc:'Poetic, complex, and challenging. For mastery-level learners only!', tags:['Philosophy','Passion','Mastery'],
+    prompt:`You are Friedrich Nietzsche. IMPORTANT: You are talking with a C2 English learner (mastery level). Use rich, poetic, and philosophical language. Employ metaphor, irony, aphorism, and complex rhetorical structures. Reference Nietzschean concepts: will to power, Übermensch, eternal recurrence, master morality. Be provocative and intellectually uncompromising. Keep replies 100-120 words.`,
+    judgeLevel:`The human debater is a C2 English learner (mastery level). Judge their English at the highest level. Expect sophisticated rhetoric, stylistic flair, and nuanced philosophical reasoning. Be demanding but fair.`}
+];
+
+const TOPICS_BY_LEVEL = {
+  A2: [
+    "Cats are better pets than dogs",
+    "Children should not use smartphones",
+    "School uniforms are a good idea",
+    "It is better to live in a city than in the countryside",
+    "Money is the most important thing in life",
+    "Watching TV is a waste of time",
+    "Fast food is bad for people",
+    "Everyone should learn to cook",
+    "It is better to have one good friend than many friends",
+    "Video games are good for children",
+    "Summer is the best season",
+    "Students should have less homework",
+    "Zoos are good for animals",
+    "Shopping online is better than shopping in stores",
+    "Music makes people happier"
+  ],
+  B1: [
+    "Social media does more harm than good",
+    "Education should be completely free worldwide",
+    "Technology is making humans less human",
+    "Happiness is more important than truth",
+    "Animals should have the same rights as humans",
+    "Working from home is better than working in an office",
+    "Space exploration is a waste of resources",
+    "The voting age should be lowered to 16",
+    "Violent video games cause violent behavior",
+    "Nuclear energy is necessary to fight climate change"
+  ],
+  B2: [
+    "Climate change action justifies major economic sacrifice",
+    "Universal basic income should be implemented worldwide",
+    "Privacy is more important than national security",
+    "Capitalism is the best economic system humanity has found",
+    "The death penalty is never justified",
+    "Individual freedom should be limited for the greater good",
+    "Borders between countries should be abolished",
+    "Artificial intelligence will create more jobs than it destroys"
+  ],
+  C1: [
+    "AI will do more harm than good for humanity",
+    "Social media has made democracy weaker",
+    "Violence is sometimes necessary to achieve justice",
+    "Liberal democracy is the best form of government",
+    "Economic growth and environmental sustainability are incompatible"
+  ],
+  C2: [
+    "Morality is subjective and culturally determined",
+    "The concept of free will is an illusion",
+    "Western liberal values should be universal human values",
+    "Art has no objective value — only subjective experience"
+  ]
+};
+
+function getTopicsForLevel(level) {
+  const map = {A2: TOPICS_BY_LEVEL.A2, B1: [...TOPICS_BY_LEVEL.A2, ...TOPICS_BY_LEVEL.B1],
+    B2: [...TOPICS_BY_LEVEL.B1, ...TOPICS_BY_LEVEL.B2],
+    C1: [...TOPICS_BY_LEVEL.B2, ...TOPICS_BY_LEVEL.C1, ...TOPICS_BY_LEVEL.C2],
+    C2: [...TOPICS_BY_LEVEL.C1, ...TOPICS_BY_LEVEL.C2]};
+  return map[level] || TOPICS_BY_LEVEL.B1;
+}
+
+let selected=null, topic='', stance='', history=[], round=0, busy=false;
+const MAX=3;
+
+function saveKey(){
+  const val=document.getElementById('apikey-input').value.trim();
+  if(!val.startsWith('sk-ant-')){
+    document.getElementById('apikey-error').style.display='block';
+    return;
+  }
+  window.ANTHROPIC_KEY=val;
+  showScreen('select');
+}
+
+(function init(){
+  const grid=document.getElementById('chars-grid');
+  CHARS.forEach(c=>{
+    const el=document.createElement('div');
+    el.className='char-card';
+    el.innerHTML=`<span class="char-emoji">${c.emoji}</span><span class="level-badge ${c.levelClass}">${c.level}</span><div class="char-name">${c.name}</div><div class="char-era">${c.era}</div><div class="char-desc">${c.desc}</div><div class="char-tags">${c.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>`;
+    el.onclick=()=>pick(c.id);
+    grid.appendChild(el);
+  });
+  document.getElementById('user-input').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')sendArg();});
+  showScreen('apikey');
+})();
+
+function pick(id){
+  selected=CHARS.find(c=>c.id===id);
+  document.querySelectorAll('.char-card').forEach((el,i)=>el.classList.toggle('selected',CHARS[i].id===id));
+  document.getElementById('start-btn').disabled=false;
+}
+
+async function startDebate(){
+  if(!selected)return;
+  const levelTopics=getTopicsForLevel(selected.level); topic=levelTopics[Math.floor(Math.random()*levelTopics.length)];
+  document.getElementById('stance-opp-emoji').textContent=selected.emoji;
+  document.getElementById('stance-opp-name').textContent=selected.name;
+  document.getElementById('stance-topic-text').textContent=`"${topic}"`;
+  showScreen('stance');
+}
+
+function rerollTopic(){
+  const levelTopics=getTopicsForLevel(selected.level); topic=levelTopics[Math.floor(Math.random()*levelTopics.length)];
+  document.getElementById('stance-topic-text').textContent=`"${topic}"`;
+}
+
+async function chooseStance(s){
+  stance=s;
+  const stanceLabel=s==='for'?'👍 FOR (agree)':'👎 AGAINST (disagree)';
+  history=[]; round=0;
+  document.getElementById('opp-emoji').textContent=selected.emoji;
+  document.getElementById('opp-name-hd').textContent=selected.name;
+  document.getElementById('topic-text').textContent=`"${topic}"`;
+  document.getElementById('stance-display').textContent=stanceLabel;
+  document.getElementById('chat-box').innerHTML='';
+  buildPips(); showScreen('debate'); updateRound();
+  addMsg('sys',`💬 Topic: "${topic}" — Your position: ${stanceLabel}`);
+  const oppStance=s==='for'?'against':'for';
+  await aiTalk(`The debate topic is: "${topic}". The human will argue ${s} this topic. You argue ${oppStance} it. Please give your opening statement arguing ${oppStance} the motion.`, true);
+}
+
+function buildPips(){
+  const row=document.getElementById('round-pips'); row.innerHTML='';
+  for(let i=0;i<MAX;i++){const d=document.createElement('div');d.className='round-pip'+(i===0?' active':'');d.id=`pip-${i}`;row.appendChild(d);}
+}
+
+function updateRound(){
+  document.getElementById('round-label').textContent=`Round ${round+1} of ${MAX}`;
+  const hints=['Round 1: Make your opening argument!','Round 2: Counter their point with evidence!','Round 3: Final argument — make it count!'];
+  document.getElementById('round-hint').textContent=hints[Math.min(round,MAX-1)];
+  for(let i=0;i<MAX;i++){const p=document.getElementById(`pip-${i}`);if(!p)continue;p.className='round-pip';if(i<round)p.classList.add('done');else if(i===round)p.classList.add('active');}
+}
+
+async function sendArg(){
+  if(busy)return;
+  const inp=document.getElementById('user-input'); const txt=inp.value.trim(); if(!txt)return;
+  inp.value=''; addMsg('you',txt,'You'); round++;
+  if(round>=MAX){await aiTalk(txt,false); await judge();}
+  else{updateRound(); await aiTalk(txt,false);}
+}
+
+async function forceJudge(){if(round===0||busy)return; await judge();}
+
+async function aiTalk(userMsg,opening){
+  busy=true; document.getElementById('send-btn').disabled=true;
+  history.push({role:'user',content:userMsg});
+  const thinkEl=addThinking();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':window.ANTHROPIC_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,system:selected.prompt,messages:history})});
+    const data=await res.json(); const text=data.content?.[0]?.text||'...';
+    history.push({role:'assistant',content:text}); thinkEl.remove(); addMsg('opp',text,selected.name);
+  }catch(e){thinkEl.remove(); addMsg('sys','⚠️ Connection error — please try again.');}
+  busy=false; if(round<MAX)document.getElementById('send-btn').disabled=false;
+}
+
+async function judge(){
+  showScreen('judgment');
+  const transcript=history.map(m=>`${m.role==='user'?'Human':selected.name}: ${m.content}`).join('\n\n');
+  const prompt=`You are an English debate judge. Analyze this debate transcript and return a JSON object.
+
+Topic: "${topic}" | Human position: ${stance==="for"?"FOR":"AGAINST"} | Level: ${selected.level}
+${selected.judgeLevel}
+
+TRANSCRIPT:
+${transcript}
+
+You MUST return ONLY a raw JSON object. No markdown, no explanation, no extra text.
+The JSON must have these exact keys:
+- winner: one of "human", "ai", "draw"
+- logic_score: integer 1-10
+- english_score: integer 1-10
+- persuasion_score: integer 1-10
+- verdict: string (2 sentences max, no quotes inside)
+- strengths: array of 3 short strings (no quotes inside strings)
+- improvements: array of 3 objects, each with keys: original, better, reason (short strings only, no quotes inside)
+- tips: array of 3 short strings
+
+Example of valid improvements item: {"original":"I think this is good","better":"I believe this is beneficial","reason":"More formal vocabulary"}`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':window.ANTHROPIC_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    let raw=data.content?.[0]?.text||'{}';
+    // Clean up common JSON issues
+    raw=raw.replace(/```json/g,'').replace(/```/g,'').trim();
+    const firstBrace=raw.indexOf('{'); const lastBrace=raw.lastIndexOf('}');
+    if(firstBrace>=0&&lastBrace>=0) raw=raw.slice(firstBrace,lastBrace+1);
+    // Remove control characters that break JSON parse
+    raw=raw.replace(/[\x00-\x1F\x7F]/g,' ').replace(/\n/g,' ');
+    let result;
+    try{ result=JSON.parse(raw); }
+    catch(parseErr){
+      // Fallback: try to extract fields manually
+      console.warn('JSON parse failed, using fallback',parseErr);
+      result={
+        winner: raw.includes('"human"')?'human': raw.includes('"draw"')?'draw':'ai',
+        logic_score:6, english_score:6, persuasion_score:6,
+        verdict:'The debate has been analyzed.',
+        strengths:['Good effort!','You made clear points.','Keep practicing!'],
+        improvements:[],
+        tips:['Try to use more specific examples.','Use linking words like "furthermore" and "however".','State your position clearly at the start.']
+      };
+    }
+    displayResult(result);
+  }catch(e){
+    console.error(e);
+    document.getElementById('fb-strengths').innerHTML='<div>⚠️ Could not load analysis. Please try again.</div>';
+  }
+}
+
+function displayResult(r){
+  saveHistory(r);
+  saveVocabItems(r.improvements||[]);
+  const map={human:{emoji:'🏆',title:'VICTORY!',cls:'win',sub:'You outargued a legend — incredible! 🎉'},
+    ai:{emoji:'😤',title:'DEFEAT',cls:'lose',sub:`${selected.name} won this round — study and rematch! 💪`},
+    draw:{emoji:'🤝',title:'DRAW!',cls:'draw',sub:'A fierce tie — both sides made great points! 🔥'}};
+  const m=map[r.winner]||map.draw;
+  document.getElementById('result-emoji').textContent=m.emoji;
+  document.getElementById('result-title').textContent=m.title;
+  document.getElementById('result-title').className=`result-title ${m.cls}`;
+  document.getElementById('result-sub').textContent=m.sub;
+  setTimeout(()=>{setBar('logic',r.logic_score);setBar('english',r.english_score);setBar('persuasion',r.persuasion_score);},200);
+
+  // Strengths
+  const strengths=Array.isArray(r.strengths)?r.strengths:[r.strengths||r.strength||'—'];
+  document.getElementById('fb-strengths').innerHTML=strengths.map(s=>`<div style="margin-bottom:6px;">✅ ${s}</div>`).join('');
+
+  // Improvements - formatted nicely
+  const improvements=Array.isArray(r.improvements)?r.improvements:[];
+  if(improvements.length>0){
+    document.getElementById('fb-improve').innerHTML=improvements.map(imp=>`
+      <div style="margin-bottom:12px;padding:8px;background:#fff8f8;border-left:3px solid #f87171;border-radius:4px;">
+        <div style="color:#ef4444;font-size:11px;font-weight:800;margin-bottom:3px;">ORIGINAL</div>
+        <div style="color:#374151;margin-bottom:5px;">"${imp.original}"</div>
+        <div style="color:#10b981;font-size:11px;font-weight:800;margin-bottom:3px;">BETTER</div>
+        <div style="color:#374151;margin-bottom:5px;">"${imp.better}"</div>
+        <div style="color:#6b7280;font-size:11px;">${imp.reason}</div>
+      </div>`).join('');
+  } else {
+    document.getElementById('fb-improve').textContent=r.weaknesses||r.weakness||'—';
+  }
+
+  // Tips
+  const tips=Array.isArray(r.tips)?r.tips:(r.coaching_tips?[r.coaching_tips]:[]);
+  document.getElementById('fb-coach').innerHTML=tips.map(t=>`<div style="margin-bottom:8px;">💡 ${t}</div>`).join('') || '—';
+}
+
+function setBar(key,score){
+  document.getElementById(`bar-${key}`).style.width=(score/10*100)+'%';
+  document.getElementById(`num-${key}`).textContent=score+'/10';
+}
+
+function addMsg(type,text,name){
+  const box=document.getElementById('chat-box'); const el=document.createElement('div'); el.className=`msg ${type}`;
+  const nameHtml=name?`<div class="msg-who">${name}</div>`:'';
+  el.innerHTML=`${nameHtml}<div class="msg-bubble">${esc(text)}</div>`;
+  box.appendChild(el); box.scrollTop=box.scrollHeight; return el;
+}
+
+function addThinking(){
+  const box=document.getElementById('chat-box'); const el=document.createElement('div'); el.className='msg opp';
+  el.innerHTML=`<div class="msg-who">${selected?.name||'...'}</div><div class="thinking-wrap"><div class="dots"><span></span><span></span><span></span></div>thinking...</div>`;
+  box.appendChild(el); box.scrollTop=box.scrollHeight; return el;
+}
+
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function resetGame(){selected=null;document.querySelectorAll('.char-card').forEach(el=>el.classList.remove('selected'));document.getElementById('start-btn').disabled=true;showScreen('select');}
+function rematch(){if(selected){document.querySelectorAll('.char-card').forEach((el,i)=>el.classList.toggle('selected',CHARS[i].id===selected.id));document.getElementById('start-btn').disabled=false;}showScreen('select');}
+
+// ===== STORAGE =====
+function saveHistory(result){
+  const records=JSON.parse(localStorage.getItem('dq_history')||'[]');
+  records.unshift({
+    date: new Date().toLocaleDateString('ja-JP'),
+    topic, stance,
+    char: selected.name, charEmoji: selected.emoji, level: selected.level,
+    winner: result.winner,
+    logic: result.logic_score, english: result.english_score, persuasion: result.persuasion_score
+  });
+  localStorage.setItem('dq_history', JSON.stringify(records.slice(0,50)));
+}
+
+function saveVocabItems(improvements){
+  if(!Array.isArray(improvements)||improvements.length===0) return;
+  const vocab=JSON.parse(localStorage.getItem('dq_vocab')||'[]');
+  improvements.forEach(imp=>{
+    if(imp.original&&imp.better){
+      vocab.unshift({id:Date.now()+Math.random(), original:imp.original, better:imp.better, reason:imp.reason||'', date:new Date().toLocaleDateString('ja-JP'), topic});
+    }
+  });
+  localStorage.setItem('dq_vocab', JSON.stringify(vocab.slice(0,200)));
+}
+
+function renderHistory(){
+  const records=JSON.parse(localStorage.getItem('dq_history')||'[]');
+  const el=document.getElementById('history-list');
+  if(records.length===0){el.innerHTML='<div class="empty-state">📭 No battles yet!<br>Play a game to see your history.</div>';return;}
+  const resultMap={human:{emoji:'🏆',label:'WIN'},ai:{emoji:'😤',label:'LOSE'},draw:{emoji:'🤝',label:'DRAW'}};
+  el.innerHTML=records.map(r=>{
+    const rm=resultMap[r.winner]||resultMap.draw;
+    return `<div class="history-card">
+      <div class="history-result">${rm.emoji}</div>
+      <div class="history-info">
+        <div class="history-topic">"${r.topic}"</div>
+        <div class="history-meta">${r.charEmoji} ${r.char} · ${r.level} · ${r.date} · ${r.stance==='for'?'👍 FOR':'👎 AGAINST'}</div>
+      </div>
+      <div class="history-scores">🧠 ${r.logic}/10<br>🇬🇧 ${r.english}/10<br>💡 ${r.persuasion}/10</div>
+    </div>`;
+  }).join('');
+}
+
+function renderVocab(){
+  const vocab=JSON.parse(localStorage.getItem('dq_vocab')||'[]');
+  const el=document.getElementById('vocab-list');
+  if(vocab.length===0){el.innerHTML='<div class="empty-state">📭 No vocabulary saved yet!<br>Improve phrases from debates will appear here.</div>';return;}
+  el.innerHTML=vocab.map(v=>`
+    <div class="vocab-card" id="vc-${v.id}">
+      <button class="vocab-delete" onclick="deleteVocab('${v.id}')">✕</button>
+      <div class="vocab-original">❌ Original: "${v.original}"</div>
+      <div class="vocab-better">✅ Better: "${v.better}"</div>
+      <div class="vocab-reason">${v.reason}</div>
+      <div style="font-size:10px;color:var(--text-light);margin-top:6px;">${v.date} · "${v.topic}"</div>
+    </div>`).join('');
+}
+
+function deleteVocab(id){
+  let vocab=JSON.parse(localStorage.getItem('dq_vocab')||'[]');
+  vocab=vocab.filter(v=>String(v.id)!==String(id));
+  localStorage.setItem('dq_vocab',JSON.stringify(vocab));
+  renderVocab();
+}
+
+function clearVocab(){
+  if(confirm('Clear all vocabulary?')){localStorage.removeItem('dq_vocab');renderVocab();}
+}
+
+function navTo(screen){
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    const names=['select','history','vocab'];
+    t.classList.toggle('active', names[i]===screen);
+  });
+  if(screen==='history') renderHistory();
+  if(screen==='vocab') renderVocab();
+  showScreen(screen);
+}
+
+// Hide nav during active game screens
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+  const gameScreens=['stance','debate','judgment'];
+  document.getElementById('main-nav').style.display=gameScreens.includes(id)?'none':'flex';
+}
+</script>
+</body>
+</html>
